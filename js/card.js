@@ -13,19 +13,3 @@ export class Card {
         this.suite = suite;
     }
 }
-
-export class Deck {
-    constructor() {
-        this.cards = [];
-        this.generateDeck();
-    }
-
-    generateDeck() {
-        this.cards = [];
-        for (let suite = 0; suite < 4; suite++) {
-            for (let value = 1; value <= 13; value++){
-                this.cards.push(new Card(value, suite));
-            }
-        }
-    }
-}
