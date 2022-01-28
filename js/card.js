@@ -48,11 +48,15 @@ export class Card {
 
     updateHTML() {
         if (this.visible) {
-            this.dom.innerText = this.getStr();
+            this.dom.querySelector("p").innerText = this.getStr();
             this.dom.style.color = this.isBlack() ? "black" : "red";
         }
         else {
-            this.dom.innerText = "x";
+            this.dom.querySelector("p").innerText = "x";
         }
+    }
+
+    action() {
+        console.log(this.getStr());
     }
 }

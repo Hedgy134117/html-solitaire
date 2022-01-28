@@ -105,19 +105,6 @@ export class Table {
         }
     }
 
-    setInitialHTML() {
-        let rows = document.querySelectorAll(".row");
-        for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-            for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
-                let el = rows[rowIndex].children[colIndex];
-                let column = this.columns[colIndex];
-                if (rowIndex < column.cards.length) {
-                    column.cards[rowIndex].dom = el;
-                }
-            }
-        }
-    }
-
     generateGame() {
         // Generate the deck
         let cards = [];
@@ -137,6 +124,29 @@ export class Table {
                 }
                 cards.splice(cardIndex, 1);
                 this.columns[i].cards.push(card);
+            }
+        }
+
+        // Go through each HTML card space, and set the Card DOM to the card space
+        // basically set each card's dom value to the appropriate dom element
+        let rows = document.querySelectorAll(".row");
+        for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+            for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
+                let el = rows[rowIndex].children[colIndex];
+                let column = this.columns[colIndex];
+                if (rowIndex < column.cards.length) {
+                    let card = column.cards[rowIndex];
+
+                    /* 
+                    Just adding the event listener to call the function "action" on the card makes `this` the
+                    DOM object instead of the card itself. By using bind, we make sure that when the DOM object
+                    is clicked on, `this` is the card object itself, not the DOM object.
+                    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
+                    */
+                    let action = card.action.bind(card);
+                    el.addEventListener("click", action);
+                    card.dom = el;
+                }
             }
         }
 
