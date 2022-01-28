@@ -47,8 +47,10 @@ export class Foundation {
 }
 
 export class Column {
-    constructor(cards) {
+    constructor(id, cards) {
+        this.id = id;
         this.cards = [] || cards;
+        this.dom = [];
     }
 
     addCard(card) {
@@ -65,6 +67,15 @@ export class Column {
             return true;
         }
         return false;
+    }
+
+    updateHTML() {
+        for (let i = 0; i < this.cards.length; i++) {
+            let card = this.cards[i];
+            let str = `${card.getStrValue()}${card.getStrSuite()}`;
+            this.dom[i].innerText = str;
+            this.dom[i].style.color = card.isBlack() ? "black" : "red";
+        }
     }
 }
 
@@ -87,7 +98,25 @@ export class Table {
         }
         else {
             for (let i = 0; i < 7; i++) {
-                this.columns.push(new Column());
+                this.columns.push(new Column(i));
+            }
+        }
+        this.setColumnHTML();
+    }
+
+    updateHTML() {
+        for (let i = 0; i < this.columns.length; i++) {
+            this.columns[i].updateHTML();
+        }
+    }
+
+    setColumnHTML() {
+        let rows = document.querySelectorAll(".row");
+        console.log(rows);
+        for (let row of rows) {
+            for (let i = 0; i < this.columns.length; i++) {
+                let el = row.children[i]
+                this.columns[i].dom.push(el);
             }
         }
     }
