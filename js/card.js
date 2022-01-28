@@ -8,13 +8,19 @@ Values:     |  Suites:
 */
 
 export class Card {
-    constructor(value, suite) {
+    constructor(value, suite, visible) {
         this.value = value;
         this.suite = suite;
+        this.visible = visible;
+        this.dom = null;
     }
 
     isBlack() {
         return this.suite % 2 == 0;
+    }
+
+    getStr() {
+        return `${this.getStrValue()}${this.getStrSuite()}`;
     }
 
     getStrValue() {
@@ -38,5 +44,15 @@ export class Card {
             3: "D"
         };
         return suites[this.suite];
+    }
+
+    updateHTML() {
+        if (this.visible) {
+            this.dom.innerText = this.getStr();
+            this.dom.style.color = this.isBlack() ? "black" : "red";
+        }
+        else {
+            this.dom.innerText = "x";
+        }
     }
 }

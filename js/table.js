@@ -50,7 +50,6 @@ export class Column {
     constructor(id, cards) {
         this.id = id;
         this.cards = [] || cards;
-        this.dom = [];
     }
 
     addCard(card) {
@@ -71,10 +70,7 @@ export class Column {
 
     updateHTML() {
         for (let i = 0; i < this.cards.length; i++) {
-            let card = this.cards[i];
-            let str = `${card.getStrValue()}${card.getStrSuite()}`;
-            this.dom[i].innerText = str;
-            this.dom[i].style.color = card.isBlack() ? "black" : "red";
+            this.cards[i].updateHTML();
         }
     }
 }
@@ -101,7 +97,6 @@ export class Table {
                 this.columns.push(new Column(i));
             }
         }
-        this.setColumnHTML();
     }
 
     updateHTML() {
@@ -110,13 +105,15 @@ export class Table {
         }
     }
 
-    setColumnHTML() {
+    setInitialHTML() {
         let rows = document.querySelectorAll(".row");
-        console.log(rows);
-        for (let row of rows) {
-            for (let i = 0; i < this.columns.length; i++) {
-                let el = row.children[i]
-                this.columns[i].dom.push(el);
+        for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+            for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
+                let el = rows[rowIndex].children[colIndex];
+                let column = this.columns[colIndex];
+                if (rowIndex < column.cards.length) {
+                    column.cards[rowIndex].dom = el;
+                }
             }
         }
     }
@@ -126,7 +123,7 @@ export class Table {
         let cards = [];
         for (let suite = 0; suite < 4; suite++) {
             for (let value = 1; value <= 13; value++) {
-                cards.push(new Card(value, suite));
+                cards.push(new Card(value, suite, false));
             }
         }
 
@@ -135,6 +132,9 @@ export class Table {
             for (let j = 0; j < i + 1; j++) {
                 let cardIndex = Math.floor(Math.random() * cards.length);
                 let card = cards[cardIndex];
+                if (!(j + 1 < i + 1)) {
+                    card.visible = true;
+                }
                 cards.splice(cardIndex, 1);
                 this.columns[i].cards.push(card);
             }
