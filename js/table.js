@@ -83,7 +83,7 @@ export class Column {
         if (lastCard.visible) {
             return;
         }
-        
+
         lastCard.visible = true;
         this.updateHTML();
     }
@@ -179,18 +179,32 @@ export class Table {
         }
     }
 
+    resetSelectedCards() {
+        this.selectedCardA.unhighlight();
+        this.selectedCardA = null;
+        this.selectedCardB = null;
+    }
+
     moveCard() {
         // selectedCardA = Card to be moved
         // selectedCardB = Card to move to
-        
+        if (this.selectedCardA == this.selectedCardB) {
+            this.resetSelectedCards();
+            return;
+        }
+
+        let success = this.selectedCardB.col.addCard(this.selectedCardA);
+        console.log(success);
+        if (!success) {
+            this.resetSelectedCards();
+            return;
+        }
         this.selectedCardA.col.remCard();
         this.selectedCardA.col.revealCard();
-        this.selectedCardB.col.addCard(this.selectedCardA);
         this.selectedCardA.col = this.selectedCardB.col;
 
-        this.selectedCardB.col.dom.appendChild(this.selectedCardA.dom); 
+        this.selectedCardB.col.dom.appendChild(this.selectedCardA.dom);
 
-        this.selectedCardA = null;
-        this.selectedCardB = null;
+        this.resetSelectedCards();
     }
 }

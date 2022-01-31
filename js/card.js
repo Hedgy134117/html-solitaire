@@ -58,9 +58,18 @@ export class Card {
         }
     }
 
+    highlight() {
+        this.dom.style.backgroundColor = "gray";
+    }
+
+    unhighlight() {
+        this.dom.style.backgroundColor = "white";
+    }
+
     action() {
         console.log(this);
         if (this.table.selectedCardA == null) {
+            this.highlight();
             this.table.selectedCardA = this;
             return;
         }
