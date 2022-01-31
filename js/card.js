@@ -8,10 +8,11 @@ Values:     |  Suites:
 */
 
 export class Card {
-    constructor(value, suite, visible) {
+    constructor(value, suite, visible, table) {
         this.value = value;
         this.suite = suite;
         this.visible = visible;
+        this.table = table;
         this.dom = null;
     }
 
@@ -46,6 +47,37 @@ export class Card {
         return suites[this.suite];
     }
 
+    moveDom(prevCard) {
+        // card to be moved = CTBM
+        // card to move to = CTMT
+
+        let rows = Array.from(document.querySelectorAll(".row"));
+
+        // row of the CTBM
+        let rowCTBM = this.dom.parentElement;
+
+        // index in the row of the CTBM
+        let indexCTBM = rows.indexOf(rowCTBM);
+
+        // row of the CTMT
+        let rowCTMT = prevCard.dom.parentElement;
+
+        // index in the row of the CTMT
+        let indexCTMT = rows.indexOf(rowCTMT);
+
+        // index of CTMT + 1 to get the reference node
+        // row of the CTMT + 1 to get the parent node 
+        let parent = rows[indexCTMT + 1]
+
+        let toSwap = Array.from(parent.children)[indexCTMT];
+
+        let thisParent = this.dom.parentElement;
+        let thisSibling = this.dom.nextSibling;
+        let toSwapParent = toSwap.parentElement;
+        toSwapParent.insertBefore(this.dom, toSwap);
+        thisParent.insertBefore(toSwap, thisSibling);
+    }
+
     updateHTML() {
         if (this.visible) {
             this.dom.querySelector("p").innerText = this.getStr();
@@ -57,6 +89,11 @@ export class Card {
     }
 
     action() {
-        console.log(this.getStr());
+        if (this.table.selectedCardA == null) {
+            this.table.selectedCardA = this;
+            return;
+        }
+        this.table.selectedCardB = this;
+        this.table.moveCard();
     }
 }

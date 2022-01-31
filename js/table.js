@@ -61,11 +61,24 @@ export class Column {
             return false;
         }
 
-        if (prevCard.value > card) {
-            this.cards.push(card);
-            return true;
+        if (prevCard.value < card.value) {
+            return false;
         }
-        return false;
+
+        this.cards.push(card);
+        card.moveDom(prevCard);
+        this.updateHTML();
+        return true;
+    }
+
+    remCard() {
+        this.cards.pop();
+    }
+
+    revealCard() {
+        let lastCard = this.cards[this.cards.length - 1];
+        lastCard.visible = true;
+        this.updateHTML();
     }
 
     updateHTML() {
@@ -97,6 +110,9 @@ export class Table {
                 this.columns.push(new Column(i));
             }
         }
+
+        this.selectedCardA = null;
+        this.selectedCardB = null;
     }
 
     updateHTML() {
@@ -110,7 +126,7 @@ export class Table {
         let cards = [];
         for (let suite = 0; suite < 4; suite++) {
             for (let value = 1; value <= 13; value++) {
-                cards.push(new Card(value, suite, false));
+                cards.push(new Card(value, suite, false, this));
             }
         }
 
@@ -157,5 +173,31 @@ export class Table {
             cards.splice(cardIndex, 1);
             this.pile.cards.push(card);
         }
+    }
+
+    moveCard() {
+        for (let i = 0; i < this.columns.length; i++) {
+            let colCards = this.columns[i].cards;
+            for (let j = 0; j < colCards.length; j++) {
+                if (colCards[j] == this.selectedCardA) {
+                    this.columns[i].remCard();
+                    this.columns[i].revealCard();
+                }
+            }
+        }
+
+        for (let i = 0; i < this.columns.length; i++) {
+            let colCards = this.columns[i].cards;
+            for (let j = 0; j < colCards.length; j++) {
+                if (colCards[j] == this.selectedCardB) {
+                    this.columns[i].addCard(this.selectedCardA);
+                }
+            }
+        }
+
+        console.log(this.columns);
+
+        this.selectedCardA = null;
+        this.selectedCardB = null;
     }
 }
