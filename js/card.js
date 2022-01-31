@@ -59,6 +59,7 @@ export class Card {
     }
 
     action() {
+        console.log(this);
         if (this.table.selectedCardA == null) {
             this.table.selectedCardA = this;
             return;

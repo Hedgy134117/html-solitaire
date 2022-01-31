@@ -77,6 +77,13 @@ export class Column {
 
     revealCard() {
         let lastCard = this.cards[this.cards.length - 1];
+        if (lastCard == undefined) {
+            return;
+        }
+        if (lastCard.visible) {
+            return;
+        }
+        
         lastCard.visible = true;
         this.updateHTML();
     }
@@ -173,10 +180,15 @@ export class Table {
     }
 
     moveCard() {
+        // selectedCardA = Card to be moved
+        // selectedCardB = Card to move to
+        
         this.selectedCardA.col.remCard();
         this.selectedCardA.col.revealCard();
         this.selectedCardB.col.addCard(this.selectedCardA);
-        console.log(this.columns);
+        this.selectedCardA.col = this.selectedCardB.col;
+
+        this.selectedCardB.col.dom.appendChild(this.selectedCardA.dom); 
 
         this.selectedCardA = null;
         this.selectedCardB = null;
