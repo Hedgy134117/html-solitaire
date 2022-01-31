@@ -5,17 +5,36 @@ export class Pile {
         this.cards = [] || cards;
         this.current = null;
         this.drawn = [];
+        this.drawDom = document.querySelector("#drawPile");
+        let draw = this.draw.bind(this);
+        this.drawDom.addEventListener("click", draw);
+        this.currentDom = document.querySelector("#currentDraw");
     }
 
     draw() {
-        this.drawn.push(this.current);
+        if (this.current != null) {
+            this.drawn.push(this.current);
+        }
+
         if (this.cards.length <= 0) {
             this.cards = this.drawn;
             this.drawn = [];
             this.current = null;
             return null;
         }
+
         this.current = this.cards.pop();
+        this.updateHTML();
+    }
+
+    updateHTML() {
+        this.current.dom.style.display = "block";
+        this.current.updateHTML();
+        for (let i = 0; i < this.drawn.length; i++) {
+            let card = this.drawn[i];
+            card.dom.style.display = "none";
+            card.updateHTML();
+        }
     }
 }
 
@@ -126,6 +145,7 @@ export class Table {
         for (let i = 0; i < this.columns.length; i++) {
             this.columns[i].updateHTML();
         }
+        this.pile.updateHTML();
     }
 
     generateGame() {
@@ -174,6 +194,18 @@ export class Table {
         while (cards.length > 0) {
             let cardIndex = Math.floor(Math.random() * cards.length);
             let card = cards[cardIndex];
+            card.visible = true;
+
+            // Create the dom element
+            // - Put it in the draw pile
+            // - Set it as invisible
+            let dom = document.createElement("p");
+            let action = card.action.bind(card);
+            dom.addEventListener("click", action);
+            dom.style.display = "none";
+            this.pile.currentDom.appendChild(dom);
+            card.dom = dom;
+
             cards.splice(cardIndex, 1);
             this.pile.cards.push(card);
         }
@@ -194,13 +226,20 @@ export class Table {
         }
 
         let success = this.selectedCardB.col.addCard(this.selectedCardA);
-        console.log(success);
         if (!success) {
             this.resetSelectedCards();
             return;
         }
-        this.selectedCardA.col.remCard();
-        this.selectedCardA.col.revealCard();
+
+        // If the card is not in the draw pile, change it's column and reveal the card behind it
+        if (this.selectedCardA.col != null) {
+            this.selectedCardA.col.remCard();
+            this.selectedCardA.col.revealCard();
+        }
+        // If the card is from the draw pile, remove it from the draw pile
+        else {
+            this.pile.current = null;
+        }
         this.selectedCardA.col = this.selectedCardB.col;
 
         this.selectedCardB.col.dom.appendChild(this.selectedCardA.dom);
