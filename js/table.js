@@ -47,9 +47,10 @@ export class Foundation {
 }
 
 export class Column {
-    constructor(id, cards) {
+    constructor(id, cards, dom) {
         this.id = id;
         this.cards = [] || cards;
+        this.dom = dom;
     }
 
     addCard(card) {
@@ -107,7 +108,7 @@ export class Table {
         }
         else {
             for (let i = 0; i < 7; i++) {
-                this.columns.push(new Column(i));
+                this.columns.push(new Column(i, [], document.querySelector(`#col-${i + 1}`)));
             }
         }
 
@@ -143,26 +144,13 @@ export class Table {
             }
         }
 
-        // Go through each HTML card space, and set the Card DOM to the card space
-        // basically set each card's dom value to the appropriate dom element
-        let rows = document.querySelectorAll(".row");
-        for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-            for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
-                let el = rows[rowIndex].children[colIndex];
-                let column = this.columns[colIndex];
-                if (rowIndex < column.cards.length) {
-                    let card = column.cards[rowIndex];
-
-                    /* 
-                    Just adding the event listener to call the function "action" on the card makes `this` the
-                    DOM object instead of the card itself. By using bind, we make sure that when the DOM object
-                    is clicked on, `this` is the card object itself, not the DOM object.
-                    https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
-                    */
-                    let action = card.action.bind(card);
-                    el.addEventListener("click", action);
-                    card.dom = el;
-                }
+        // Go through each card in each column and create its dom element
+        for (let i = 0; i < this.columns.length; i++) {
+            let col = this.columns[i];
+            for (let j = 0; j < col.cards.length; j++) {
+                let dom = document.createElement("p");
+                col.dom.appendChild(dom);
+                col.cards[j].dom = dom;
             }
         }
 

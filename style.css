@@ -7,8 +7,10 @@ table {
 
 table, tr, td {
     border: 1px solid black;
+    vertical-align: top;
 }
 
 td p {
-    display: inline;
+    border: 1px solid black;
+    margin: 1px;
 }

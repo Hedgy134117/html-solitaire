@@ -47,44 +47,13 @@ export class Card {
         return suites[this.suite];
     }
 
-    moveDom(prevCard) {
-        // card to be moved = CTBM
-        // card to move to = CTMT
-
-        let rows = Array.from(document.querySelectorAll(".row"));
-
-        // row of the CTBM
-        let rowCTBM = this.dom.parentElement;
-
-        // index in the row of the CTBM
-        let indexCTBM = rows.indexOf(rowCTBM);
-
-        // row of the CTMT
-        let rowCTMT = prevCard.dom.parentElement;
-
-        // index in the row of the CTMT
-        let indexCTMT = rows.indexOf(rowCTMT);
-
-        // index of CTMT + 1 to get the reference node
-        // row of the CTMT + 1 to get the parent node 
-        let parent = rows[indexCTMT + 1]
-
-        let toSwap = Array.from(parent.children)[indexCTMT];
-
-        let thisParent = this.dom.parentElement;
-        let thisSibling = this.dom.nextSibling;
-        let toSwapParent = toSwap.parentElement;
-        toSwapParent.insertBefore(this.dom, toSwap);
-        thisParent.insertBefore(toSwap, thisSibling);
-    }
-
     updateHTML() {
         if (this.visible) {
-            this.dom.querySelector("p").innerText = this.getStr();
+            this.dom.innerText = this.getStr();
             this.dom.style.color = this.isBlack() ? "black" : "red";
         }
         else {
-            this.dom.querySelector("p").innerText = "x";
+            this.dom.innerText = "x";
         }
     }
 
