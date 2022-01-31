@@ -67,7 +67,6 @@ export class Column {
         }
 
         this.cards.push(card);
-        card.moveDom(prevCard);
         this.updateHTML();
         return true;
     }
@@ -127,7 +126,7 @@ export class Table {
         let cards = [];
         for (let suite = 0; suite < 4; suite++) {
             for (let value = 1; value <= 13; value++) {
-                cards.push(new Card(value, suite, false, this));
+                cards.push(new Card(value, suite, false, this, null));
             }
         }
 
@@ -136,6 +135,7 @@ export class Table {
             for (let j = 0; j < i + 1; j++) {
                 let cardIndex = Math.floor(Math.random() * cards.length);
                 let card = cards[cardIndex];
+                card.col = this.columns[i];
                 if (!(j + 1 < i + 1)) {
                     card.visible = true;
                 }
@@ -148,9 +148,18 @@ export class Table {
         for (let i = 0; i < this.columns.length; i++) {
             let col = this.columns[i];
             for (let j = 0; j < col.cards.length; j++) {
+                let card = col.cards[j];
                 let dom = document.createElement("p");
+                /* 
+                Just adding the event listener to call the function "action" on the card makes `this` the
+                DOM object instead of the card itself. By using bind, we make sure that when the DOM object
+                is clicked on, `this` is the card object itself, not the DOM object.
+                https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
+                */
+                let action = card.action.bind(card);
+                dom.addEventListener("click", action);
+                card.dom = dom;
                 col.dom.appendChild(dom);
-                col.cards[j].dom = dom;
             }
         }
 
@@ -164,25 +173,9 @@ export class Table {
     }
 
     moveCard() {
-        for (let i = 0; i < this.columns.length; i++) {
-            let colCards = this.columns[i].cards;
-            for (let j = 0; j < colCards.length; j++) {
-                if (colCards[j] == this.selectedCardA) {
-                    this.columns[i].remCard();
-                    this.columns[i].revealCard();
-                }
-            }
-        }
-
-        for (let i = 0; i < this.columns.length; i++) {
-            let colCards = this.columns[i].cards;
-            for (let j = 0; j < colCards.length; j++) {
-                if (colCards[j] == this.selectedCardB) {
-                    this.columns[i].addCard(this.selectedCardA);
-                }
-            }
-        }
-
+        this.selectedCardA.col.remCard();
+        this.selectedCardA.col.revealCard();
+        this.selectedCardB.col.addCard(this.selectedCardA);
         console.log(this.columns);
 
         this.selectedCardA = null;

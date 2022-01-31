@@ -8,11 +8,12 @@ Values:     |  Suites:
 */
 
 export class Card {
-    constructor(value, suite, visible, table) {
+    constructor(value, suite, visible, table, col) {
         this.value = value;
         this.suite = suite;
         this.visible = visible;
         this.table = table;
+        this.col = col;
         this.dom = null;
     }
 
